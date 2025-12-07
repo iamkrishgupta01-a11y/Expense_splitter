@@ -96,3 +96,87 @@ class ExpenseManager:
             return [share for share in self.shares.values() if share.expense_id == expense_id]
       
       
+      #CLI
+def main():
+      manager = ExpenseManager()
+       
+      while True:
+            print("Please Enter the corresponding value for your operation")
+            print("1. Create Trip")
+            print("2. Add Member to Trip")            
+            print("3. Add Expense with Equal Split")
+            print("4. List Trips")                                      
+            print("5. List Members in a Trip")
+            print("6. List Expenses in a Trip")
+            print("7. List Shares for an Expense")
+            print("0. Exit")
+      
+            choice = input("Enter your choice: ").strip()
+
+            if choice == "1":
+             name = input("Enter trip name: ").strip()
+             trip = manager.create_trip(name)
+             print(f"Trip created: {trip}")
+
+            elif choice == "2":
+             trip_id = int(input("Enter trip ID: ").strip())
+             name = input("Enter member name: ").strip()
+             email = input("Enter member email: ").strip()
+             member = manager.add_member(name, email, trip_id)
+             print(f"Member added: {member}")     
+
+            elif choice == "3":
+             trip_id = int(input("Enter trip ID: ").strip())
+             amount = float(input("Enter expense amount: ").strip())
+             paid_by_id = int(input("Enter member ID who paid: ").strip())
+             description = input("Enter expense description (optional): ").strip() or None
+             paid_by = manager.members.get(paid_by_id)
+             if not paid_by:
+                  print("Invalid member ID.")
+                  continue
+             
+             expense, shares = manager.add_expense_equal_split(amount, paid_by, trip_id, description)
+             print(f"Expense added: {expense}")
+             print("Shares:")
+             for share in shares:
+                  print(share)      
+
+
+            elif choice == "4":
+             trips = manager.list_trips()
+             print("Trips:")
+             for trip in trips:
+                  print(trip)       
+
+            elif choice == "5":
+             trip_id = int(input("Enter trip ID: ").strip())
+             members = manager.list_members(trip_id)
+             print("Members:")
+             for member in members:
+                  print(member)
+
+            elif choice == "6":
+             trip_id = int(input("Enter trip ID: ").strip())
+             expenses = manager.list_expenses(trip_id)
+             print("Expenses:")
+             for expense in expenses:
+                  print(expense)    
+
+            elif choice == "7":
+             expense_id = int(input("Enter expense ID: ").strip())
+             shares = manager.list_shares(expense_id)
+             print("Shares:")
+             for share in shares:
+                  print(share)
+
+            elif choice == "0":
+             print("Exiting...")
+             break       
+
+            else:
+             print("Invalid choice. Please try again.")      
+
+if __name__ == "__main__":
+      main()
+
+
