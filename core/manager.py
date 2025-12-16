@@ -58,12 +58,18 @@ class ExpenseManager:
       def list_trips(self) -> List[Trip]:
             return list(self.trips.values())
       
+
+
       def add_member(self, name:str, email:str, trip_id: int)-> Member:
             member= Member(name=name, email=email, id=self.member_counter, trip_id=trip_id)
             self.members[self.member_counter]= member
             self.member_counter += 1
-            return member
+            return member                                     
       
+
+
+
+
       def list_members(self, trip_id:int) -> List[Member]:
             return [member for member in self.members.values() if member.trip_id == trip_id]          
       
@@ -71,14 +77,18 @@ class ExpenseManager:
             
             members= self.list_members(trip_id)
             if not members:
-                  raise ValueError("No members found in the trip to split the expense.")
+                  raise ValueError("No members found in the given trip to split the expense.")
             
+
+
             expense = Expense(amount=round(amount,2), paid_by=paid_by, trip_id=trip_id, description=description, id=self.expense_counter)
             self.expenses[self.expense_counter]= expense
             self.expense_counter += 1
 
             split_amount= round(amount,2) / len(members)
             per_head= round(split_amount,2)
+
+
 
             shares= []
             for member in members:
@@ -96,7 +106,14 @@ class ExpenseManager:
             return [share for share in self.shares.values() if share.expense_id == expense_id]
       
       
-      #CLI
+      def get_balance(self, member_id:int) -> float:
+           total_owed= sum(share.to_be_paid for share in self.shares.values() if share.member.id == member_id)
+             
+           
+      #CLI now 
+
+
+      
 def main():
       manager = ExpenseManager()
        
@@ -109,22 +126,29 @@ def main():
             print("5. List Members in a Trip")
             print("6. List Expenses in a Trip")
             print("7. List Shares for an Expense")
+            print("8. Get Member Balance")
             print("0. Exit")
       
+            
             choice = input("Enter your choice: ").strip()
 
+            
             if choice == "1":
              name = input("Enter trip name: ").strip()
              trip = manager.create_trip(name)
              print(f"Trip created: {trip}")
 
+            
             elif choice == "2":
              trip_id = int(input("Enter trip ID: ").strip())
              name = input("Enter member name: ").strip()
-             email = input("Enter member email: ").strip()
+             email = input("Enter member email: ").strip()          #I have used this for e mail integration later.(will do it with some more features)
              member = manager.add_member(name, email, trip_id)
-             print(f"Member added: {member}")     
+             print(f"Member added iwth the following info: {member}")     
 
+            
+            
+            
             elif choice == "3":
              trip_id = int(input("Enter trip ID: ").strip())
              amount = float(input("Enter expense amount: ").strip())
@@ -142,12 +166,21 @@ def main():
                   print(share)      
 
 
+           
+           
+
+            
+            
             elif choice == "4":
              trips = manager.list_trips()
              print("Trips:")
              for trip in trips:
                   print(trip)       
 
+            
+
+
+            
             elif choice == "5":
              trip_id = int(input("Enter trip ID: ").strip())
              members = manager.list_members(trip_id)
@@ -155,6 +188,8 @@ def main():
              for member in members:
                   print(member)
 
+           
+           
             elif choice == "6":
              trip_id = int(input("Enter trip ID: ").strip())
              expenses = manager.list_expenses(trip_id)
@@ -162,17 +197,30 @@ def main():
              for expense in expenses:
                   print(expense)    
 
+            
+
+
+
+            
             elif choice == "7":
              expense_id = int(input("Enter expense ID: ").strip())
              shares = manager.list_shares(expense_id)
              print("Shares:")
              for share in shares:
                   print(share)
-
+            
+            
             elif choice == "0":
-             print("Exiting...")
+             print("Exiting...........")
              break       
+            
 
+            elif choice == 8:
+                 member_id = int(input("Enter member ID: ").strip())
+                 balance = manager.get_balance(member_id)
+                 print(f"Balance for the member is : {balance}")
+           
+           
             else:
              print("Invalid choice. Please try again.")      
 
